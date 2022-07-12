@@ -1,7 +1,7 @@
 package models;
 
 public class CreateOrder {
-    String [] ingredients;
+    String[] ingredients;
 
     public CreateOrder(String[] ingredients) {
         this.ingredients = ingredients;

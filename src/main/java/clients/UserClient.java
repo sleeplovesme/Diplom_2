@@ -1,4 +1,4 @@
-package client;
+package clients;
 
 import io.qameta.allure.Step;
 import io.restassured.http.ContentType;
@@ -29,5 +29,10 @@ public class UserClient {
     public static Response sendPatchRequestAuthUser(String accessToken, CreateUser user) {
         return given().header("Authorization", accessToken).contentType(ContentType.JSON)
                 .body(user).patch("/api/auth/user");
+    }
+
+    @Step("Создание объекта пользователь")
+    public static CreateUser createObjectUser(String email, String password, String name) {
+        return new CreateUser(email, password, name);
     }
 }

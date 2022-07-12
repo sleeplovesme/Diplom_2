@@ -1,7 +1,6 @@
 package tests;
 
-import client.UserClient;
-import io.qameta.allure.Step;
+import clients.*;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -12,7 +11,6 @@ import org.junit.Test;
 
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
-import static org.hamcrest.Matchers.equalTo;
 
 public class LoginTests {
 
@@ -32,33 +30,16 @@ public class LoginTests {
     @Test
     @DisplayName("Логин под существующим пользователем")
     public void successfulLogin() {
-        Login login = createObjectLogin(DEFAULT_EMAIL, DEFAULT_PASSWORD);
+        Login login = LoginClient.createObjectLogin(DEFAULT_EMAIL, DEFAULT_PASSWORD);
         Response response = UserClient.sendPostRequestAuthLogin(login);
-        checkExpectedResult(response, SC_OK, EXPECTED_RESULT_TRUE);
+        ChecksClient.checkExpectedResult(response, SC_OK, EXPECTED_RESULT_TRUE);
     }
 
     @Test
     @DisplayName("Логин с неверным паролем")
     public void loginWithWrongEmail() {
-        Login loginCourier = createObjectLogin(DEFAULT_EMAIL, password);
+        Login loginCourier = LoginClient.createObjectLogin(DEFAULT_EMAIL, password);
         Response response = UserClient.sendPostRequestAuthLogin(loginCourier);
-        checkErrorMessage(response, SC_UNAUTHORIZED, EXPECTED_RESULT_FALSE, INCORRECT_FIELDS);
-    }
-
-    @Step("Создание объекта логин")
-    public Login createObjectLogin(String email, String password) {
-        return new Login(email, password);
-    }
-
-    @Step("Проверка соответствия кода ответа и id не равен null")
-    public void checkExpectedResult(Response response, int statusCode, boolean expectedResult) {
-        response.then().assertThat().statusCode(statusCode).and().body("success", equalTo(expectedResult));
-    }
-
-    @Step("Проверка соответствия текста ошибки")
-    public void checkErrorMessage(Response response, int statusCode, boolean expectedResult, String errorMessage) {
-        response.then().assertThat().statusCode(statusCode)
-                .and().body("success", equalTo(expectedResult))
-                .and().body("message", equalTo(errorMessage));
+        ChecksClient.checkErrorMessage(response, SC_UNAUTHORIZED, EXPECTED_RESULT_FALSE, INCORRECT_FIELDS);
     }
 }
